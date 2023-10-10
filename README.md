@@ -14,6 +14,3 @@ TypeScript is the preferred language for this challenge, but JavaScript will als
 
 ### Aesthetic Considerations
 While visual design is important, the primary focus of this challenge is on functionality and code quality.
-
-
-
