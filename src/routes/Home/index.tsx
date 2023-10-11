@@ -1,5 +1,7 @@
-import React from 'react';
-import * as Theme from '@theme';
+import React, { useCallback, useMemo, useState } from 'react';
+
+import * as s from './styles';
+import { UserProvider, useUser } from '@providers';
 
 /* TODO:
 1. Center Card component within the #home.
@@ -7,26 +9,42 @@ import * as Theme from '@theme';
 3. Display user's masked phone number, and implement a way to unmask it. Use UserProvider's context.
 */
 
-const Card = () => {
+const Card = (): JSX.Element => {
+  const userState = useUser();
+  const [isMasking, setIsMasking] = useState(false);
+
+  const toggleMasking = useCallback(() => {
+    setIsMasking(prev => !prev);
+  }, []);
+
+  const fullName = useMemo(
+    () => `${userState?.user?.first_name} ${userState?.user?.last_name}`,
+    [userState],
+  );
+
+  const phoneToShow = useMemo(
+    () => (isMasking ? userState?.user?.masked_phone : userState?.phone),
+    [isMasking, userState],
+  );
+
   return (
     <div id="card">
-      ...
-    </div>
-  ); 
-}
-
-const homeStyle = {
-  backgroundColor: Theme.colors.beige,
-  width: '100vw',
-  height: '100vh',
-};
-
-const Home = () => {
-  return (
-    <div id="home" style={homeStyle}>
-      <Card />
+      <p>Name</p>
+      <p>{fullName}</p>
+      <p onClick={toggleMasking}>Phone</p>
+      <p>{phoneToShow}</p>
     </div>
   );
-}
+};
+
+const Home = (): JSX.Element => {
+  return (
+    <UserProvider>
+      <div id="home" style={s.homeStyle}>
+        <Card />
+      </div>
+    </UserProvider>
+  );
+};
 
 export default Home;
